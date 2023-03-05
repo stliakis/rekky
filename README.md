@@ -1,6 +1,4 @@
-# Open source recommendation engine
-
-# Rekky is an open source item similarity & collaborative filtering recommendation engine
+## Rekky is an open source item similarity & collaborative filtering recommendation engine
 
 ---
 
