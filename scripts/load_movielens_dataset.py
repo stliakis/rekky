@@ -41,31 +41,31 @@ def main():
     # requests.delete(f"{REKKY_HOST}/api/collection/items", json={"collection": "movielens"})
     # requests.delete(f"{REKKY_HOST}/api/collection/events", json={"collection": "movielens"})
 
-    # items_bucket = []
-    # with zipfile.open("%s/movies.csv" % DATASET) as file:
-    #     for line in csv.reader(
-    #             [
-    #                 str(line)
-    #                         .replace("\\r", "")
-    #                         .replace("\\n", "")
-    #                         .replace("b'", "")
-    #                         .replace('b"', "")
-    #                 for line in file.readlines()[1:]
-    #             ]
-    #     ):
-    #         items_bucket.append(
-    #             {
-    #                 "id": line[0],
-    #                 "properties": {"name": line[1], "genre": line[2].split("|")}
-    #             }
-    #         )
-    #
-    #     print("finished")
-    #
-    # requests.post(f"{REKKY_HOST}/api/items", json={
-    #     "collection": "movielens",
-    #     "items": items_bucket
-    # })
+    items_bucket = []
+    with zipfile.open("%s/movies.csv" % DATASET) as file:
+        for line in csv.reader(
+                [
+                    str(line)
+                            .replace("\\r", "")
+                            .replace("\\n", "")
+                            .replace("b'", "")
+                            .replace('b"', "")
+                    for line in file.readlines()[1:]
+                ]
+        ):
+            items_bucket.append(
+                {
+                    "id": line[0],
+                    "properties": {"name": line[1], "genre": line[2].split("|")}
+                }
+            )
+
+        print("finished")
+
+    requests.post(f"{REKKY_HOST}/api/items", json={
+        "collection": "movielens",
+        "items": items_bucket
+    })
 
     count = 0
 
