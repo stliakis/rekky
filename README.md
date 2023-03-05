@@ -21,7 +21,13 @@ By letting OpenAI calculate the embeddings vectors we can match items that mean 
     
     `docker compose up`
     
-3. Optionaly add the movielens dataset for experimentation
+3. Check the API
+    
+    `curl [http://localhost:8045/health](http://localhost:8045/health)`
+    
+    Should return `{"message":"Hi. I'm alive!"}`
+    
+4. Optionaly add the movielens dataset for experimentation
     
     `python scripts/load_movielens_dataset.py -d small`
     

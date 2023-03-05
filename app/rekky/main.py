@@ -16,3 +16,8 @@ app = FastAPI(redoc_url="/docs", docs_url="/docs/swagger")
 app.include_router(items.router)
 app.include_router(events.router)
 app.include_router(recommendations.router)
+
+
+@app.get("/health")
+def health():
+    return {"message": "Hi. I'm alive!"}
