@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  proxy:
+    ports:
+      - "8045:80"
+
+  app:
+    volumes:
+      - ./app/:/app
+    command: "uvicorn rekky.main:app --host 0.0.0.0 --port 80 --reload"
+
+  celery:
+    volumes:
+      - ./app/:/app
+    command: "watchmedo auto-restart --recursive -d rekky/ -p '*.py' -- celery -A rekky.celery_app worker --loglevel=DEBUG"

@@ -1,0 +1,68 @@
+version: '2'
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: app.dockerfile
+      args:
+        ENVIRONMENT: production
+    env_file:
+      - .env
+    restart: always
+
+  celery:
+    build:
+      context: ./app
+      dockerfile: celery.dockerfile
+      args:
+        ENVIRONMENT: production
+    env_file:
+      - .env
+    restart: always
+
+  proxy:
+    ports:
+      - "80"
+    build:
+      context: ./proxy
+      dockerfile: proxy.dockerfile
+    depends_on:
+      - app
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes:
+      - app-qdrant-data:/data
+    ports:
+      - "6333:6333"
+
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    volumes:
+      - app-es-data:/var/lib/elasticsearch/data
+    ports:
+      - "9201:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "http.cors.enabled=true"
+      - "http.cors.allow-origin=*"
+      - "http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
+      - discovery.type=single-node
+      - node.name=elasticsearch
+      - cluster.name=nexly-es-cluster
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+
+  redis:
+    image: redis:latest
+
+networks:
+  default:
+
+volumes:
+  app-es-data:
+  app-qdrant-data:
