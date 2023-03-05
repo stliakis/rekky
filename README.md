@@ -7,6 +7,10 @@
 - Uses Elasticsearch for collaborative filtering recommendations
 - [TODO] Automatically mixes collaborative with similarity recommendations when collaborative data are not enough to provide good recommendations
 
+**Why OpenAI embeddings API?**
+
+By letting OpenAI calculate the embeddings vectors we can match items that mean similar things, for example if you have an item that has `{”title”: “detached home”}` as properties, the relative items will also match items that for example have properties like `{”title”: “isolated house”}` cause detached is synonym to isolated and home synonym to house.
+
 ## Running locally
 
 1. Copy the .env.example to .env and add your OpenAI api key
@@ -32,25 +36,33 @@ You can send up to 100.000 items in a single post request, the ingestion happens
 
 ```python
 requests.post("/api/items", json={
-    "collection": "movies",
+    "collection": "classifieds",
     "items": [
         {
-            "id": "1",
+            "id": 40172483,
             "properties": {
-                "genre": [
-                    "Adventure",
-                    "Animation"
-                ],
-                "name": "SpongeBob SquarePants Movie, The (2004)"
+                "category": "Apartment -> Home -> Rent -> Real Estate",
+                "area": 47,
+                "price": 470,
+                "offer_type": "rent"
             }
         },
         {
-            "id": "2",
+            "id": 40248423,
             "properties": {
-                "genre": [
-                    "Action"
-                ],
-                "name": "Matrix"
+                "category": "Detached Home -> Home -> Sale -> Real Estate",
+                "area": 134.0,
+                "price": 100000.0,
+                "offer_type": "sale"
+            }
+        },
+        {
+            "id": 40451490,
+            "properties": {
+                "category": "Hotel -> Commercial -> Sale -> Real Estate",
+                "area": 130.0,
+                "price": 260000.0,
+                "offer_type": "sale"
             }
         }
     ]
@@ -64,7 +76,7 @@ requests.post("/api/recommend", json={
     "collection": "movies",
     "config": {
         "similarity": {
-            "similar_to_item": "1" ## similar to item with id=1
+            "similar_to_item": 40451490 ## similar to item with id=40451490
         }
     }
 })
@@ -76,7 +88,10 @@ requests.post("/api/recommend", json={
     "config": {
         "similarity": {
             "similar_to_properties": {
-                "name": "animation"
+                "category": "Hotel -> Commercial -> Sale -> Real Estate",
+                "area": 100.0,
+                "price": 200000.0,
+                "offer_type": "sale"
             }
         }
     }
@@ -89,22 +104,22 @@ You can send up to 1 million events in a single post request, the ingestion happ
 
 ```python
 requests.post("/api/events", json={
-    "collection": "movies",
+    "collection": "classifieds",
     "events": [
         {
-            "item_id": "1",
+            "item_id": 40136315,
             "user_id": "3112779531605195",
-            "event": "movie_like"
+            "event": "classified_view"
         },
         {
-            "item_id": "2",
+            "item_id": 40636186,
             "user_id": "3JAV8WT10U1FF49I",
-            "event": "movie_like"
+            "event": "classified_view"
         },
         {
-            "item_id": "1",
+            "item_id": 40514326,
             "user_id": "EUI3UD9KLLPS9WZ8",
-            "event": "movie_like"
+            "event": "classified_view"
         }
     ]
 })
@@ -114,10 +129,10 @@ requests.post("/api/events", json={
 
 ```python
 requests.post("/api/recommend", json={
-    "collection": "movies",
+    "collection": "classifieds",
     "config": {
         "collaborative": {
-            "item_ids": ["1"]
+            "item_ids": [40136315]
         }
     }
 })
