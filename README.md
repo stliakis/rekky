@@ -23,7 +23,7 @@ By letting OpenAI calculate the embeddings vectors we can match items that mean 
     
 3. Check the API
     
-    `curl [http://localhost:8045/health](http://localhost:8045/health)`
+    `curl http://localhost:8045/health`
     
     Should return `{"message":"Hi. I'm alive!"}`
     
